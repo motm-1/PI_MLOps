@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 import pandas as pd
 
-playtimegenre_df = pd.read_parquet('ApiDatasets/PlayTimeGenre.parquet')
+playtimegenre_df = pd.read_parquet('ApiDatasets/playtimegenre.parquet')
 userforgenre_df = pd.read_parquet('ApiDatasets/userforgenre.parquet')
 
 app = FastAPI()
