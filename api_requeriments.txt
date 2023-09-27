@@ -1,0 +1,5 @@
+pandas
+fastapi
+uvicorn[standard]
+fastparquet
+pyarrow
