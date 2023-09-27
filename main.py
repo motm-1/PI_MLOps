@@ -40,11 +40,21 @@ async def usersrecommend(year:int):
     df = usersrecommend_df[usersrecommend_df['year'] == year]
     position_game = df[['position', 'title']].to_numpy().tolist()
 
+    try:
+        position_game[0]
+    except IndexError: #Nonexistent year
+        raise HTTPException(status_code=404, detail=f"The year {year} doesn't exists in our database")
+    
     return [{position: f"{title}" for position, title in position_game}]
 
 @app.get('/UsersNotRecommend/{year}')
 async def usersnotrecommend(year:int):
     df = usersnotrecommend_df[usersnotrecommend_df['year'] == year]
     position_game = df[['position', 'title']].to_numpy().tolist()
+    
+    try:
+        position_game[0]
+    except IndexError: #Nonexistent year
+        raise HTTPException(status_code=404, detail=f"The year {year} doesn't exists in our database")
 
     return [{position: f"{title}" for position, title in position_game}]
