@@ -1,8 +1,10 @@
 from fastapi import FastAPI, HTTPException
 import pandas as pd
 
-playtimegenre_df = pd.read_parquet('ApiDatasets/PlayTimeGenre.parquet')
+playtimegenre_df = pd.read_parquet('ApiDatasets/playtimegenre.parquet')
 userforgenre_df = pd.read_parquet('ApiDatasets/userforgenre.parquet')
+usersrecommend_df = pd.read_parquet('ApiDatasets/usersrecommend.parquet')
+usersnotrecommend_df = pd.read_parquet('ApiDatasets/usersnotrecommend.parquet')
 
 app = FastAPI()
 
@@ -33,3 +35,16 @@ async def userforgenre(genre:str):
     
     return {f'User with the most hours for the genre {genre}: {df["user_id"].iloc[0]}', f'{[{key:value} for key, value in list_years_hours]}'}
 
+@app.get('/UsersRecommend/{year}')
+async def usersrecommend(year:int):
+    df = usersrecommend_df[usersrecommend_df['year'] == year]
+    position_game = df[['position', 'title']].to_numpy().tolist()
+
+    return [{position: f"{title}" for position, title in position_game}]
+
+@app.get('/UsersNotRecommend/{year}')
+async def usersnotrecommend(year:int):
+    df = usersnotrecommend_df[usersnotrecommend_df['year'] == year]
+    position_game = df[['position', 'title']].to_numpy().tolist()
+
+    return [{position: f"{title}" for position, title in position_game}]
