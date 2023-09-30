@@ -1,4 +1,10 @@
 # <h1> **Individual Project MLOps** </h1>
+<p align="center">
+<img src="./_src/mlops_ia.jpg"  height=400 width=400>
+</p>
+  
+<p align="center"> Image created by <a href="https://creator.nightcafe.studio/">NightCafe</a> </p>
+ 
 # <h2> **Introduction and Objetives of the project** </h2>
 
 In this project i have the objective of transform the datasets provided and find the most valuable variables to make accurate recommendation systems for my API, in which you can also find historical information about steam games and users.
