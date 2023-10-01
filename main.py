@@ -6,14 +6,14 @@ from tensorflow.python.ops.numpy_ops import np_config
 np_config.enable_numpy_behavior()
 from keras.models import load_model
 
-playtimegenre_df = pd.read_parquet('ApiDatasets/playtimegenre.parquet')
-userforgenre_df = pd.read_parquet('ApiDatasets/userforgenre.parquet')
-usersrecommend_df = pd.read_parquet('ApiDatasets/usersrecommend.parquet')
-usersnotrecommend_df = pd.read_parquet('ApiDatasets/usersnotrecommend.parquet')
-sentimentanalysis_df = pd.read_parquet('ApiDatasets/sentimentanalysis.parquet')
-item_item_df = pd.read_parquet('ApiDatasets/item_item.parquet')
-cosine_sim = joblib.load('Models/cosine_sim.joblib')
-model = load_model('Models/collaborative_filtering')
+playtimegenre_df = pd.read_parquet('./_src/ApiDatasets/playtimegenre.parquet')
+userforgenre_df = pd.read_parquet('./_src/ApiDatasets/userforgenre.parquet')
+usersrecommend_df = pd.read_parquet('./_src/ApiDatasets/usersrecommend.parquet')
+usersnotrecommend_df = pd.read_parquet('./_src/ApiDatasets/usersnotrecommend.parquet')
+sentimentanalysis_df = pd.read_parquet('./_src/ApiDatasets/sentimentanalysis.parquet')
+item_item_df = pd.read_parquet('./_src/ApiDatasets/item_item.parquet')
+cosine_sim = joblib.load('./_src/Models/cosine_sim.joblib')
+model = load_model('./_src/Models/collaborative_filtering')
 
 app = FastAPI()
 

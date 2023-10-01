@@ -10,7 +10,7 @@ def prepare_dataset():
     data = data[['title','item_id','items_data']]
     data['title'] = data['title'].str.title()
 
-    data.to_parquet('ApiDatasets/item_item.parquet')
+    data.to_parquet('_src/ApiDatasets/item_item.parquet')
     return data
 
 def calculate_cosine_sim(data):
@@ -18,7 +18,7 @@ def calculate_cosine_sim(data):
     tfidf_matrix = tfidf_vectorizer.fit_transform(data['items_data'])
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
-    joblib.dump(cosine_sim, 'Models/cosine_sim.joblib', compress=True)
+    joblib.dump(cosine_sim, '_src/Models/cosine_sim.joblib', compress=True)
 
 
 def main():

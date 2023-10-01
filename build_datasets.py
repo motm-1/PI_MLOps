@@ -28,7 +28,7 @@ def df_playtimegenre(df):
         ids.append(df[df['genres'] == genre]['playtime_forever'].idxmax())
     df = df.loc[ids]
 
-    df.to_parquet('ApiDatasets/playtimegenre.parquet', index=False)
+    df.to_parquet('_src/ApiDatasets/playtimegenre.parquet', index=False)
 
 def df_userforgenre(df):
     df_to_get_played_hours = df.groupby(['user_id', 'genres', 'release_date'])
@@ -51,7 +51,7 @@ def df_userforgenre(df):
         id = row.user_id
         df = pd.concat((df, df_to_get_played_hours[(df_to_get_played_hours['genres'] == genre) & (df_to_get_played_hours['user_id'] == id)]))
 
-    df.to_parquet('ApiDatasets/userforgenre.parquet', index=False)
+    df.to_parquet('_src/ApiDatasets/userforgenre.parquet', index=False)
 
 def df_user_recommendations():
     df_r = df_reviews.copy()
@@ -93,8 +93,8 @@ def df_user_recommendations():
     final_false_df['position'] = 1
     final_false_df.loc[1:, 'position'] = list(range(1, 4)) * (len(final_false_df) // 3) #Set the position in the ranking for every year (the first year doesn't have three games to rank, only one)
 
-    final_true_df.to_parquet('ApiDatasets/usersrecommend.parquet')
-    final_false_df.to_parquet('ApiDatasets/usersnotrecommend.parquet')
+    final_true_df.to_parquet('_src/ApiDatasets/usersrecommend.parquet')
+    final_false_df.to_parquet('_src/ApiDatasets/usersnotrecommend.parquet')
 
 def df_collaborative_filtering():
     df_s = df_games.copy()
@@ -137,7 +137,7 @@ def df_sentiment_analysis():
     df_se['year'] = pd.to_datetime(df_se['posted']).dt.year
     df_se = df_se.groupby(['year', 'sentiment_analysis']).agg('count').reset_index().rename({'posted':'count'}, axis=1)
 
-    df_se.to_parquet('ApiDatasets/sentimentanalysis.parquet')
+    df_se.to_parquet('_src/ApiDatasets/sentimentanalysis.parquet')
 
 def combine_columns(row):
     if row['genres'] is not None and not isinstance(row['genres'], str) and row['tags'] is not None and not isinstance(row['tags'], str):
