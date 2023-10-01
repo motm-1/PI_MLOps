@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 import pandas as pd
+import joblib
 
 from tensorflow.python.ops.numpy_ops import np_config
 np_config.enable_numpy_behavior()
@@ -11,7 +12,7 @@ usersrecommend_df = pd.read_parquet('ApiDatasets/usersrecommend.parquet')
 usersnotrecommend_df = pd.read_parquet('ApiDatasets/usersnotrecommend.parquet')
 sentimentanalysis_df = pd.read_parquet('ApiDatasets/sentimentanalysis.parquet')
 item_item_df = pd.read_parquet('ApiDatasets/item_item.parquet')
-cosine_sim = pd.read_parquet('ApiDatasets/cosine_sim.parquet').to_numpy()
+cosine_sim = joblib.load('Models/cosine_sim.joblib')
 model = load_model('Models/collaborative_filtering')
 
 app = FastAPI()

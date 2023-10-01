@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+import joblib
 
 def prepare_dataset():
     data = pd.read_parquet('CleanDatasets/collaborative_filtering.parquet')
@@ -17,7 +18,8 @@ def calculate_cosine_sim(data):
     tfidf_matrix = tfidf_vectorizer.fit_transform(data['items_data'])
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
-    pd.DataFrame(cosine_sim).to_parquet('ApiDatasets/cosine_sim.parquet', index=False)
+    joblib.dump(cosine_sim, 'Models/cosine_sim.joblib', compress=True)
+
 
 def main():
     data = prepare_dataset()
