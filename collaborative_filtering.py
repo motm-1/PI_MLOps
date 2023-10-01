@@ -123,13 +123,12 @@ def train_model(data:dict):
 
     index.index_from_dataset(dataset.batch(100).map(lambda x: (x['title'], model.user_model(x['user_id']))))
 
-    # Save the model
     index.save(path)
 
     print('Model Saved')
 
-def list_to_str(lista):
-    return ', '.join(lista)
+def list_to_str(list):
+    return ', '.join(list)
 
 def main():
     df_s = pd.read_parquet('CleanDatasets/collaborative_filtering.parquet')

@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
 def scrape_genre(soup):
     try:
@@ -70,17 +71,17 @@ def scrape_missing_row(df):
         url = row.url
         try:
             soup = make_requests(url) 
-            if row.genres == None:
+            if not isinstance(row.genres, list) and pd.isna(row.genres):
                 df.loc[i, 'genres'] = f'{scrape_genre(soup)}'
-            if row.title == None:
+            if pd.isna(row.title):
                 df.loc[i, 'title'] = scrape_title(soup)
-            if row.release_date == None or row.release_date.startswith('Soon'):
+            if pd.isna(row.release_date) or row.release_date.startswith('Soon'):
                 df.loc[i, 'release_date'] = scrape_release_date(soup)
-            if row.tags == None:
+            if not isinstance(row.tags, list) and pd.isna(row.tags):
                 df.loc[i, 'tags'] = f'{scrape_tags(soup)}'
-            if row.price == None:
+            if pd.isna(row.price):
                 df.loc[i, 'price'] = scrape_price(soup)
-            if row.developer == None:
+            if pd.isna(row.developer):
                 df.loc[i, 'developer'] = scrape_developer(soup)
         except TypeError:
             continue

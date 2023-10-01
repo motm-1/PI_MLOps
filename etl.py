@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import re
 from etl_functions import read_json_file, handle_price_exceptions, set_datetime, calc_ejecution_time, parse_lists, convert_html
 from scraping_functions import scrape_missing_row
@@ -21,9 +22,9 @@ def reviews_datasets(filename='Datasets/australian_user_reviews.json', return_or
         FileNotFoundError: If the specified JSON file does not exist.
     """
     correct_json = read_json_file(filename)
-    df_reviews = pd.json_normalize(correct_json, record_path='reviews', meta=['user_id','user_url'])
+    df_reviews = pd.json_normalize(correct_json, record_path='reviews', meta='user_id')
 
-    columns_order = ['user_id', 'user_url'] + [col for col in df_reviews.columns if col not in ('user_id', 'user_url')]
+    columns_order = ['user_id'] + [col for col in df_reviews.columns if col not in ('user_id',)]
     df_reviews = df_reviews.reindex(columns=columns_order)
 
     if return_original == True:
@@ -34,7 +35,7 @@ def reviews_datasets(filename='Datasets/australian_user_reviews.json', return_or
     df_reviews.drop(columns=['funny', 'last_edited', 'helpful'], inplace=True)
     df_reviews.drop_duplicates(subset=['user_id', 'item_id', 'review'], inplace=True)
 
-    pattern = r'[^\w\s\':]+'
+    pattern = r'[^\w\s\':)(]+' #Regex to remove special characters in order to get a precise sentiment analysis
     df_reviews['review'] = df_reviews['review'].apply(lambda x: re.sub(pattern, '', x))
 
     df_reviews.loc[df_reviews['review'].str.strip() == '', 'review'] = '1'
@@ -57,7 +58,7 @@ def users_items_dataset(filename='Datasets/australian_users_items.json'):
     """
     correct_json = read_json_file(filename)
     df_users_items = pd.json_normalize(correct_json, record_path='items', meta='user_id')
-    df_users_items.drop('playtime_2weeks', axis=1, inplace=True)
+    df_users_items.drop('playtime_2weeks', axis=1, inplace=True) # Useless column
     df_users_items.rename(columns={'item_id':'id'}, inplace=True)
 
     df_users_items.to_csv('CleanDatasets/users_items.csv', index=False)
@@ -87,17 +88,22 @@ def steam_games_dataset(filename='Datasets/steam_games.json.gz', return_original
 
     df_games['id'].fillna(df_games['url'].str.extract(r'([0-9]+)')[0].astype('float'), inplace=True)
     df_games['id'] = df_games['id'].astype(int) # Remove dots
+    df_games.drop_duplicates(subset='id', inplace=True)
 
     df_games['title'].fillna(df_games['url'].apply(lambda x: x.split('/')[-2].replace('_', ' ').replace('  ', ' ')), inplace=True)
-    
-    df_games = scrape_missing_row(df_games)
+    # Extract title from url
 
-    df_games['price'].fillna(0.001, inplace=True) # 0.001 to distinguish them from the Free To Play games
+    df_games = df_games.replace(['', ' ', '  '], np.nan)
+
+    df_games = scrape_missing_row(df_games) # Web scraping
+    df_games = df_games.replace('', np.nan)
+
+    df_games['price'].fillna(0, inplace=True)
     df_games['price'] = df_games['price'].apply(handle_price_exceptions)
 
     df_games['genres'] = df_games['genres'].apply(parse_lists).apply(convert_html)
-
-    df_games['tags'] = df_games['tags'].apply(parse_lists).apply(convert_html)
+    # Convert strings to lists and convert html characters to unicode
+    df_games['tags'] = df_games['tags'].apply(parse_lists).apply(convert_html) 
 
     df_games['release_date'] = pd.to_datetime(df_games['release_date'], format='mixed', errors='coerce')
 

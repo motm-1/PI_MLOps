@@ -7,7 +7,7 @@
  
 # <h2> **Introduction and Objectives of the project** </h2>
 
-In this project i have the objective of transform the datasets provided and find the most valuable variables to make accurate recommendation systems for my API, in which you can also find historical information about steam games and users.
+In this project i have the goal of transform the provided datasets about steam users and games to find the most valuable variables and be able to create accurate recommendation systems for my API, in which you can also find historical valuable information.
 
 I will divide the process in 4 key tasks:
 
@@ -29,7 +29,7 @@ I will divide the process in 4 key tasks:
 To see the process you can visit the [ETL](https://github.com/motm-1/PI_MLOps/blob/main/etl.py) and [Sentiment Analysis](https://github.com/motm-1/PI_MLOps/blob/main/sentiment_analysis.py) archives.
 
 # <h2> **API Development** </h2>
-The API consist of 7 endpoints:
+The API consists of 7 endpoints:
 
 - /**PlayTimeGenre**/{`genre`}
 

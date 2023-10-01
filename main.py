@@ -10,8 +10,9 @@ userforgenre_df = pd.read_parquet('ApiDatasets/userforgenre.parquet')
 usersrecommend_df = pd.read_parquet('ApiDatasets/usersrecommend.parquet')
 usersnotrecommend_df = pd.read_parquet('ApiDatasets/usersnotrecommend.parquet')
 sentimentanalysis_df = pd.read_parquet('ApiDatasets/sentimentanalysis.parquet')
+item_item_df = pd.read_parquet('ApiDatasets/item_item.parquet')
+cosine_sim = pd.read_parquet('ApiDatasets/cosine_sim.parquet').to_numpy()
 model = load_model('Models/collaborative_filtering')
-
 
 app = FastAPI()
 
@@ -26,7 +27,7 @@ async def playtimegenre(genre:str):
     except IndexError: #Nonexistent genre
         raise HTTPException(status_code=404, detail=f"The genre {genre} doesn't exists")
     
-    return {f'Year with the most played hours for the {genre} genre: {df["release_date"].values[0]}'}
+    return {f'Year with the most played hours for the {genre} genre': f'{df["release_date"].values[0]}'}
 
 @app.get('/UserForGenre/{genre}')
 async def userforgenre(genre:str):
@@ -40,7 +41,7 @@ async def userforgenre(genre:str):
     except IndexError: #Nonexistent genre
         raise HTTPException(status_code=404, detail=f"The genre {genre} doesn't exists")
     
-    return {f'User with the most hours for the genre {genre}: {df["user_id"].iloc[0]}', f'{[{key:value} for key, value in list_years_hours]}'}
+    return {f'User with the most hours for the genre {genre}': f'{df["user_id"].iloc[0]}','Hours Played': [{key:value} for key, value in list_years_hours]}
 
 @app.get('/UsersRecommend/{year}')
 async def usersrecommend(year:int):
@@ -52,7 +53,7 @@ async def usersrecommend(year:int):
     except IndexError: #Nonexistent year
         raise HTTPException(status_code=404, detail=f"The year {year} doesn't exists in our database")
     
-    return [{position: f"{title}" for position, title in position_game}]
+    return [{position: f"{title}"} for position, title in position_game]
 
 @app.get('/UsersNotRecommend/{year}')
 async def usersnotrecommend(year:int):
@@ -64,7 +65,7 @@ async def usersnotrecommend(year:int):
     except IndexError: #Nonexistent year
         raise HTTPException(status_code=404, detail=f"The year {year} doesn't exists in our database")
 
-    return [{position: f"{title}" for position, title in position_game}]
+    return [{position: f"{title}"} for position, title in position_game]
 
 @app.get('/SentimentAnalysis/{year}')
 async def sentimentanalysis(year:int):
@@ -79,9 +80,32 @@ async def sentimentanalysis(year:int):
     
     return {labels[key]:value for key, value in zip(df['sentiment_analysis'].tolist() ,df['count'].tolist())}
 
-@app.get('/CollaborativeFiltering/{user_id}')
-async def collaborativefiltering(user_id:str):
+@app.get('/UserRecommendation/{user_id}')
+async def userrecommendation(user_id:str):
 
     scores, titles = model([user_id])
-    return{f"Top 5 recommendations for user {user_id}: {[title.decode('utf-8').split(',')[0] for title in titles[0,:5].tolist()]}"}
+    return{f"Top 5 recommendations for the user {user_id}": [title.decode('utf-8').split(',')[0] for title in titles[0,:5].tolist()]}
 
+@app.get('/ItemRecommendation/{item}')
+async def itemrecommendation(item:str):
+    data = item_item_df.copy()
+
+    try:
+        try:
+            item = int(item)
+            item = data.loc[data['item_id'] == item,'title'].values[0]
+        except ValueError:
+            item = item.title()
+        idx = data.index[data['title'] == item].tolist()[0]
+    except IndexError:
+        raise HTTPException(status_code=404, detail=f"The game {item} doesn't exists in our database")
+    
+    idx = data.index[data['title'] == item].tolist()[0]
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sim_scores[1:6]
+    game_indices = [i[0] for i in sim_scores]
+
+    recommendations = [data["title"].iloc[i].strip() for i in game_indices]
+
+    return {f'Recommendations for the game {item}': recommendations}

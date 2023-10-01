@@ -12,7 +12,7 @@ class SentimentAnalysis:
     """
     A class for performing sentiment analysis on user reviews using a pre-trained model.
 
-    Args:
+    Parameters:
         model_path (str, optional): The path or name of the pre-trained sentiment analysis model.
             Defaults to 'cardiffnlp/twitter-roberta-base-sentiment-latest'.
 
@@ -32,7 +32,7 @@ class SentimentAnalysis:
         """
         Initializes the SentimentAnalysis object.
 
-        Args:
+        Parameters:
             model_path (str, optional): The path or name of the pre-trained sentiment analysis model.
                 Defaults to 'cardiffnlp/twitter-roberta-base-sentiment-latest'.
             df_path (str, optional): The path to the CSV file containing user reviews data.
@@ -52,8 +52,6 @@ class SentimentAnalysis:
         method to handle long texts.
         If a ValueError occurs, a default sentiment label of 1 (Neutral) is assigned.
         """
-        self.df.drop(columns='user_url', inplace=True)
-
         nlp = pipeline('sentiment-analysis', model=self.model, tokenizer=self.tokenizer)
 
         self.df['sentiment_analysis'] = '--'
@@ -85,7 +83,7 @@ class SentimentAnalysis:
         performing sentiment analysis on each chunk. The sentiment scores (positive, neutral, and negative) for
         each chunk are averaged to produce an overall sentiment score for the entire text.
 
-        Args:
+        Parameters:
             text (str): The long text to analyze.
 
         Returns:
@@ -98,29 +96,32 @@ class SentimentAnalysis:
 
         text_chunks = [input_ids[i:i + 510] for i in range(0, len(input_ids), 510)]
         
-        scores = {'pos': [], 'neu': [], 'neg': []}
+        scores = {'neu': [], 'neg': [], 'pos': []}
 
         for chunk in text_chunks:
             partial_text = self.tokenizer.decode(chunk, skip_special_tokens=True)
-            result = nlp(partial_text)[0]
-            for i, key in enumerate(scores.keys()):
-                scores[key].append(result[i]['score'])
-        
+            try:    
+                result = nlp(partial_text)[0]
+                for i, key in enumerate(scores.keys()):
+                    scores[key].append(result[i]['score'])
+            except IndexError:
+                scores['neu'].append(0.6)
+
         avg_scores = {key: np.mean(val) for key, val in scores.items()}
 
         return self.set_label(avg_scores)
 
-    def set_label(self, scores):
+    def set_label(self, avg_scores):
         """
         Assigns a sentiment label based on sentiment scores.
 
-        Args:
-            scores (dict): A dictionary of sentiment scores.
+        Parameters:
+            avg_scores (dict): A dictionary of sentiment scores.
 
         Returns:
             int: The sentiment label (0 for negative, 1 for neutral, 2 for positive).
         """
-        label_index = np.argmax([scores['neg'], scores['neu'], scores['pos']])
+        label_index = np.argmax([avg_scores['neg'], avg_scores['neu'], avg_scores['pos']])
 
         return label_index
 
@@ -142,25 +143,25 @@ class SentimentAnalysis:
                     time.sleep(0.3)
                     translated_text = translator.translate(text, src=detected_language, dest='en').text
                     self.df.loc[i, 'review'] = translated_text
-            except (LangDetectException, ReadTimeout, TypeError, ReadTimeout2):
+            except (LangDetectException, ReadTimeout, ReadTimeout2, TypeError):
                 continue
     
     def run(self, save_path):
         """
         Executes the sentiment analysis and saves the results to a CSV file.
 
-        Args:
+        Parameters:
             save_path (str): The path to save the results CSV file.
         """
         self.translate_text()
         self.sentiment_analysis()
-        self.df.to_csv(save_path)
+        self.df.to_csv(save_path, index=False)
         print('Saved')
 
 @calc_ejecution_time
 def main():
     """Execute sentiment analysis functions."""
-    save_path = 'ApiDatasets/users_sentiment.csv'
+    save_path = 'CleanDatasets/users_sentiment.csv'
     analysis = SentimentAnalysis()
     analysis.run(save_path)
 
