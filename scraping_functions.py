@@ -58,6 +58,9 @@ def scrape_developer(soup):
         return None
     
 def make_requests(url):
+    """
+    Get soup object to perform web scraping
+    """
     try:
         req = requests.get(url)
         assert req.status_code == 200, f'There is a problem with the url {url}.'
@@ -67,6 +70,9 @@ def make_requests(url):
         return None
 
 def scrape_missing_row(df):
+    """
+    Scrape missing data for 'genres', 'title', 'release_date', 'tags', 'price', and 'developer' in a DataFrame.
+    """
     for i, row in df[df.isna().any(axis=1)].iterrows():
         url = row.url
         try:

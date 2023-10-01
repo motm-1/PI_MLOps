@@ -28,7 +28,7 @@ async def playtimegenre(genre:str):
     except IndexError: #Nonexistent genre
         raise HTTPException(status_code=404, detail=f"The genre {genre} doesn't exists")
     
-    return {f'Year with the most played hours for the {genre} genre': f'{df["release_date"].values[0]}'}
+    return {f'Year with the most amount of hours played for the {genre} genre': f'{df["release_date"].values[0]}'}
 
 @app.get('/UserForGenre/{genre}')
 async def userforgenre(genre:str):
@@ -42,7 +42,7 @@ async def userforgenre(genre:str):
     except IndexError: #Nonexistent genre
         raise HTTPException(status_code=404, detail=f"The genre {genre} doesn't exists")
     
-    return {f'User with the most hours for the genre {genre}': f'{df["user_id"].iloc[0]}','Hours Played': [{key:value} for key, value in list_years_hours]}
+    return {f'User with the most amount of hours played for the genre {genre}': f'{df["user_id"].iloc[0]}','Hours Played': [{key:value} for key, value in list_years_hours]}
 
 @app.get('/UsersRecommend/{year}')
 async def usersrecommend(year:int):

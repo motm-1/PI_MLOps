@@ -32,13 +32,13 @@ def reviews_datasets(filename='Datasets/australian_user_reviews.json', return_or
 
     df_reviews['posted'] = set_datetime(df_reviews['posted'])
 
-    df_reviews.drop(columns=['funny', 'last_edited', 'helpful'], inplace=True)
+    df_reviews.drop(columns=['funny', 'last_edited', 'helpful'], inplace=True) # Useless columns
     df_reviews.drop_duplicates(subset=['user_id', 'item_id', 'review'], inplace=True)
 
     pattern = r'[^\w\s\':)(]+' #Regex to remove special characters in order to get a precise sentiment analysis
     df_reviews['review'] = df_reviews['review'].apply(lambda x: re.sub(pattern, '', x))
 
-    df_reviews.loc[df_reviews['review'].str.strip() == '', 'review'] = '1'
+    df_reviews.loc[df_reviews['review'].str.strip() == '', 'review'] = '1' # Set null reviews to neutral
     
     df_reviews.to_csv('CleanDatasets/users_reviews.csv', index=False)
 
@@ -99,7 +99,7 @@ def steam_games_dataset(filename='Datasets/steam_games.json.gz', return_original
     df_games = df_games.replace('', np.nan)
 
     df_games['price'].fillna(0, inplace=True)
-    df_games['price'] = df_games['price'].apply(handle_price_exceptions)
+    df_games['price'] = df_games['price'].apply(handle_price_exceptions) # Clean price column
 
     df_games['genres'] = df_games['genres'].apply(parse_lists).apply(convert_html)
     # Convert strings to lists and convert html characters to unicode

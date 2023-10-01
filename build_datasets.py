@@ -9,8 +9,8 @@ df_sentiment = pd.read_csv('CleanDatasets/users_sentiment.csv')
 
 def exploded_df():
     df = df_items.copy()
-    df = df.merge(df_games[['genres', 'id', 'release_date']], how='left', on='id')
-    df.dropna(inplace=True)
+    df = df.merge(df_games[['genres', 'id', 'release_date']], how='left', on='id') 
+    df.dropna(inplace=True) # Drop row if there is no gender or release date information 
     df['release_date'] = pd.to_datetime(df['release_date']).dt.year
     exploded_df = df.explode('genres')
     exploded_df = exploded_df[exploded_df.genres.str.strip() != '']
@@ -23,11 +23,12 @@ def df_playtimegenre(df):
     df = df.reset_index()
 
     genres = list(pd.unique(df['genres']))
+    # For every genre, identify the row (year) with the most amount of hours accumulated and append the index to the list 'ids'
     ids = []
     for genre in genres:
         ids.append(df[df['genres'] == genre]['playtime_forever'].idxmax())
+         
     df = df.loc[ids]
-
     df.to_parquet('_src/ApiDatasets/playtimegenre.parquet', index=False)
 
 def df_userforgenre(df):
@@ -39,6 +40,7 @@ def df_userforgenre(df):
     
     genres = list(pd.unique(df_to_get_user_id['genres']))
 
+    # For every genre, identify the row (year) with the most amount of hours accumulated and append the index to the list 'ids'
     ids = []
     for genre in genres:
         ids.append(df_to_get_user_id[df_to_get_user_id['genres'] == genre]['playtime_forever'].idxmax())
@@ -46,6 +48,7 @@ def df_userforgenre(df):
     
     df = pd.DataFrame()
 
+    # For every user, identify the row that matches the genre and user_id with the most amount of hours accumulated and then concat it to a new dataframe
     for row in df_to_get_user_id.itertuples():
         genre = row.genres
         id = row.user_id
@@ -69,7 +72,8 @@ def df_user_recommendations():
 
     final_true_df = pd.DataFrame()
     final_false_df = pd.DataFrame()
-
+    
+    # From the dataset with all games and years, extract only the three most recommended/unrecommended games for every year
     for year in years:
         final_true_df = pd.concat((final_true_df, df_true[df_true['year'] == year].sort_values(by='user_id', ascending=False).iloc[:3]))
         final_false_df = pd.concat((final_false_df, df_false[df_false['year'] == year].sort_values(by='user_id', ascending=False).iloc[:3]))
@@ -91,7 +95,7 @@ def df_user_recommendations():
     
     pattern = list(range(1, 4)) * (len(final_false_df) // 3)
     final_false_df['position'] = 1
-    final_false_df.loc[1:, 'position'] = list(range(1, 4)) * (len(final_false_df) // 3) #Set the position in the ranking for every year (the first year doesn't have three games to rank, only one)
+    final_false_df.loc[1:, 'position'] = list(range(1, 4)) * (len(final_false_df) // 3) #Set the position in the ranking for every year (the first year only have one game with negative reviews)
 
     final_true_df.to_parquet('_src/ApiDatasets/usersrecommend.parquet')
     final_false_df.to_parquet('_src/ApiDatasets/usersnotrecommend.parquet')
@@ -100,15 +104,18 @@ def df_collaborative_filtering():
     df_s = df_games.copy()
     df_se = df_sentiment.copy()
 
+    # I won't use this columns in my model
     df_se = df_se.drop(columns=['recommend', 'posted'])
 
     df_merged = df_se.merge(df_s[['id', 'title','genres','tags','price','developer','release_date']], right_on='id', left_on='item_id', how='left')
 
+    # Identify missing rows and create the url to perform web scraping on them
     missing_rows = df_merged[df_merged['id'].isna()].drop_duplicates(subset='item_id')
     missing_rows['url'] = missing_rows.apply(lambda x: 'https://store.steampowered.com/app/' + str(x['item_id']), axis=1)
 
     df = scrape_missing_row(missing_rows)
 
+    #Clean scraped data, drop missing values and replace the nan values in the original dataset
     df['genres'] = df['genres'].apply(parse_lists)
     df['tags'] = df['tags'].apply(parse_lists)
     df = df.drop(['id', 'url'], axis=1).dropna(subset='title')
@@ -118,15 +125,18 @@ def df_collaborative_filtering():
     df_to_replace.index = index
     df_merged.loc[df_merged.isna().any(axis=1),['title','genres','tags','price','developer','release_date']] = df_to_replace
 
+    # Drop nan values in the title column because we can't recommend games without their names
     df_merged['release_date'] = pd.to_datetime(df_merged['release_date'], format='mixed', errors='coerce')
     df_merged.dropna(subset=['title'], inplace=True)
     df_merged['price'] = df_merged['price'].fillna(0)
 
+    # Create a labels column, merging genres and tags to be more precise in our recommendations
     df_merged['labels'] = df_merged.apply(combine_columns, axis=1)
     df_merged.dropna(subset=['labels','developer'], inplace=True)
     df_merged['labels'] = df_merged['labels'].apply(lambda x: list(set(x)))
     df_merged.drop(['genres', 'tags', 'release_date', 'id'], axis=1, inplace=True)
 
+    # Reorder the columns
     df_merged = df_merged[['user_id', 'title', 'item_id', 'price', 'developer', 'labels', 'sentiment_analysis']]
 
     df_merged.to_parquet('CleanDatasets/collaborative_filtering.parquet')
@@ -135,11 +145,15 @@ def df_sentiment_analysis():
     df_se = df_sentiment.copy()
     df_se.drop(['recommend', 'user_id', 'item_id'], axis=1, inplace=True)
     df_se['year'] = pd.to_datetime(df_se['posted']).dt.year
+    # Create a dataset with the count for every sentiment analysis labels discretized by year
     df_se = df_se.groupby(['year', 'sentiment_analysis']).agg('count').reset_index().rename({'posted':'count'}, axis=1)
 
     df_se.to_parquet('_src/ApiDatasets/sentimentanalysis.parquet')
 
 def combine_columns(row):
+    """
+    Combine 'genres' and 'tags' columns from a DataFrame row into a single list.
+    """
     if row['genres'] is not None and not isinstance(row['genres'], str) and row['tags'] is not None and not isinstance(row['tags'], str):
         return row['genres'] + row['tags']
     elif row['genres'] is not None and not isinstance(row['genres'], str):
@@ -150,11 +164,12 @@ def combine_columns(row):
         return None
 
 def main():
+    """Execute data processing functions."""
     df = exploded_df()
     df_playtimegenre(df)
     df_userforgenre(df)
     df_user_recommendations()
-
+    df_collaborative_filtering()
     df_sentiment_analysis()
 
 if __name__ == "__main__":
