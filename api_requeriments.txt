@@ -5,3 +5,4 @@ fastparquet
 pyarrow
 tensorflow
 keras
+joblib
