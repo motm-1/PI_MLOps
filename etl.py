@@ -86,9 +86,9 @@ def steam_games_dataset(filename='Datasets/steam_games.json.gz', return_original
     if return_original == True:
         return df_games
 
-    df_games['id'].fillna(df_games['url'].str.extract(r'([0-9]+)')[0].astype('float'), inplace=True)
+    df_games['id'].fillna(df_games['url'].str.extract(r'([0-9]+)')[0].astype('float'), inplace=True) # Extract id from url
     df_games['id'] = df_games['id'].astype(int) # Remove dots
-    df_games.drop_duplicates(subset='id', inplace=True)
+    df_games.drop_duplicates(subset='id', inplace=True) # Remove duplicated games
 
     df_games['title'].fillna(df_games['url'].apply(lambda x: x.split('/')[-2].replace('_', ' ').replace('  ', ' ')), inplace=True)
     # Extract title from url

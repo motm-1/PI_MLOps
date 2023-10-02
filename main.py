@@ -102,10 +102,10 @@ async def itemrecommendation(item:str):
         raise HTTPException(status_code=404, detail=f"The game {item} doesn't exists in our database")
     
     idx = data.index[data['title'] == item].tolist()[0]
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:6]
-    game_indices = [i[0] for i in sim_scores]
+    sim_scores = list(enumerate(cosine_sim[idx])) # Select the title specific vector
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True) # Order by similarity
+    sim_scores = sim_scores[1:6] # Choose the 5 more similar
+    game_indices = [i[0] for i in sim_scores] # Get the 5 game titles
 
     recommendations = [data["title"].iloc[i].strip() for i in game_indices]
 
