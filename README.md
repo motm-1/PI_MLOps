@@ -92,7 +92,7 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
 
 # <h2> **EDA And Recommendations Systems** </h2>
 - Explore the datasets and find valuable information to make my recommendations systems accurate.
-- Create a user-item system recommendation using `TensorFlow`:
+- Create a user-item recommendation system using `TensorFlow`:
   
   This recommendation system utilizes `keras` for constructing the neural network layers and `tensorflow-recommenders` to build the retrieval model responsible for selecting users and games with high similarity.
 
@@ -107,7 +107,7 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
 
   Now, the last step is to train the model, see if the results are what is expected and download it to be consumed from the API.
 
-- Create a item-item system recommendation using `Scikit-Learn` 
+- Create a item-item recommendation system using `Scikit-Learn` 
     
   This recommendations system utilizes `TfidVectorizer` from `Scikit-Learn` to transform our games information into vectors, allowing us to calculate similarity scores (using the `cosine similarity`) between them. Once we have a vector for each game in our dataset, we can create the cosine similarity matrix using `linear_kernel`, also from `Scikit-Learn`. 
     
