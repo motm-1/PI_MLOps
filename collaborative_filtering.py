@@ -88,6 +88,9 @@ class GamesModel(tfrs.Model):
         return self.task(user_embeddings, positive_game_embeddings)
 
 def train_model(data:dict):
+    """
+    Train a recommendation model using the provided data and save it.
+    """
     #Convert data to tensorflow dataset
     data = tf.data.Dataset.from_tensor_slices(data)
     #Change dataset keys names to be more specific
