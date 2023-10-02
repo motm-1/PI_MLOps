@@ -89,7 +89,7 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
 
 
 # <h2> **EDA And Recommendations Systems** </h2>
-- Explore the datasets and find valuable information to make my recommendations systems accurate:
+- Explore the datasets and find valuable information to make my recommendations systems accurate.
 - Create a user-item system recommendation using `TensorFlow`:
   
   This recommendation system utilizes `keras` for constructing the neural network layers and `tensorflow-recommenders` to build the retrieval model responsible for selecting users and games with high similarity.
@@ -98,11 +98,17 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
   
   To construct the model, you'll need two essential lists: `unique_users` and `unique_games`, which store data in string format. These lists are the vocabulary for the initial layer of the model. Additionally, you require a games list in tf.Dataset format for the retrieval model.
   
-  After creating the model, the next step is to compile it. In this case, I choose Adagrad as the optimizer with an initial learning rate of 0.09. Following compilation, you can fit the model with your datasets.
+  After creating the model, the next step is to compile it. In this case, I chose Adagrad as the optimizer with an initial learning rate of 0.09. Following compilation, you can fit the model with your datasets.
 
-  I choose the columns `genres` and `tags` and join them to create the column `labels`, convert the elements to strings and concatenate them with the game `title` to create the column that i will use in the games model embedding.
+  I chose the columns `genres` and `tags` and join them to create the column `labels`, transform the elements to strings and concatenate them with the game `title` to create the column that i will use in the games model embedding.
   For the users model embedding i just used the original `user_id` column.
 
-  Now, we only have to train our model, see if the results are what we expect and download it to be consumed from our API.
+  Now, the last step is to train the model, see if the results are what is expected and download it to be consumed from the API.
   
 - Create a item-item system recommendation using `Scikit-Learn` 
+
+This recommendations system utilizes `TfidVectorizer` from Scikit-Learn to transform our games information into vectors allowing us to calculate similarity scores (using cosine similarity) between them. Once we have a vector for each game in our dataset, we can create the cosine similarity matrix using `linear_kernel`, also from Scikit-Learn. 
+
+The cosine similarity matrix is a [m x m] square matrix, where each item [i, j] represents the similarity between the vector i and the vector j, with values ranging from -1 (opposed vectors) to 1 (identical vectors). This matrix tell us how closely our games are in terms of the selected features.
+
+For this recommendation system I selected the game titles that appear in the reviews dataset since they represent the games people are most interested in, then I chose the columns `labels` and `developer` because they contain the most representative and clean information to ensure the system's accuracy.
