@@ -77,14 +77,14 @@ Example: `2012` : *{'Negative':125, 'Neutral':203, 'Positive':873}*
 
 This endpoint requires an user id and returns five recommendations of games similar to the ones that the user and users similars to him likes.
 
-Example: `doctr` : {'Recommendations for the user doctr':['The Wolf Among Us', 'The Witcher 2: Assassins of Kings Enhanced Edition', 'Max Payne 3' 'Defiance', 'The Walking Dead']}
+Example: `doctr` : *{'Recommendations for the user doctr':['The Wolf Among Us', 'The Witcher 2: Assassins of Kings Enhanced Edition', 'Max Payne 3' 'Defiance', 'The Walking Dead']}*
 
 
 - /**ItemRecommendation**/{`item`}
 
 This endpoint requires a game id or name and returns five recommendations of similar games.
 
-Example: `Killing Floor` : {'Recommendations for the game Killing Floor':['Killing Floor 2', 'Killinf Floor: Uncovered', 'Left 4 Dead 2', 'Resident Evil Revelations / Biohazard Revelations', 'Dead By Daylight']}
+Example: `Killing Floor` : *{'Recommendations for the game Killing Floor':['Killing Floor 2', 'Killinf Floor: Uncovered', 'Left 4 Dead 2', 'Resident Evil Revelations / Biohazard Revelations', 'Dead By Daylight']}*
 
 
 To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/blob/main/main.py) and [Datasets](https://github.com/motm-1/PI_MLOps/blob/main/build_datasets.py) archives.
@@ -118,7 +118,7 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
 To see the process you can visit the [user-item](https://github.com/motm-1/PI_MLOps/blob/main/user_item.py) and [item-item](https://github.com/motm-1/PI_MLOps/blob/main/item_item.py) archives.
 
 
-# <h2> **Aditional Information** </h2>
+# <h2> **Additional Information** </h2>
 
 - [Original Datasets](https://drive.google.com/drive/folders/1HqBG2-sUkz_R3h1dZU5F2uAzpRn7BSpj) and [Data Dictonary](https://docs.google.com/spreadsheets/d/1-t9HLzLHIGXvliq56UE_gMaWBVTPfrlTf2D9uAtLGrk/edit#gid=0)
 - [Deployment](https://pi-mlops-deploy.onrender.com/docs)
