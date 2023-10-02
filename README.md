@@ -106,7 +106,7 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
   For the users model embedding i just used the original `user_id` column.
 
   Now, the last step is to train the model, see if the results are what is expected and download it to be consumed from the API.
-  
+
 - Create a item-item system recommendation using `Scikit-Learn` 
     
   This recommendations system utilizes `TfidVectorizer` from Scikit-Learn to transform our games information into vectors allowing us to calculate similarity scores (using cosine similarity) between them. Once we have a vector for each game in our dataset, we can create the cosine similarity matrix using `linear_kernel`, also from Scikit-Learn. 
