@@ -109,8 +109,8 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
 
 - Create a item-item system recommendation using `Scikit-Learn` 
     
-  This recommendations system utilizes `TfidVectorizer` from Scikit-Learn to transform our games information into vectors allowing us to calculate similarity scores (using cosine similarity) between them. Once we have a vector for each game in our dataset, we can create the cosine similarity matrix using `linear_kernel`, also from Scikit-Learn. 
+  This recommendations system utilizes `TfidVectorizer` from `Scikit-Learn` to transform our games information into vectors, allowing us to calculate similarity scores (using the `cosine similarity`) between them. Once we have a vector for each game in our dataset, we can create the cosine similarity matrix using `linear_kernel`, also from `Scikit-Learn`. 
     
   The cosine similarity matrix is a [m x m] square matrix, where each item [i, j] represents the similarity between the vector i and the vector j, with values ranging from -1 (opposed vectors) to 1 (identical vectors). This matrix tell us how closely our games are in terms of the selected features.
     
-  For this recommendation system I selected the game titles that appear in the reviews dataset since they represent the games people are most interested in, then I chose the columns `labels` and `developer` because they contain the most representative and clean information to ensure the system's accuracy.
+  For this recommendation system I selected the game `titles` that appear in the reviews dataset since they represent the games people are most interested in, then I chose the columns `labels` and `developer` because they contain the most representative and clean information to ensure the system's accuracy.
