@@ -114,3 +114,11 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
   The cosine similarity matrix is a [m x m] square matrix, where each item [i, j] represents the similarity between the vector i and the vector j, with values ranging from -1 (opposed vectors) to 1 (identical vectors). This matrix tell us how closely our games are in terms of the selected features.
     
   For this recommendation system I selected the game `titles` that appear in the reviews dataset since they represent the games people are most interested in, then I chose the columns `labels` and `developer` because they contain the most representative and clean information to ensure the system's accuracy.
+
+To see the process you can visit the [user-item](https://github.com/motm-1/PI_MLOps/blob/main/collaborative_filtering.py) and [item-item](https://github.com/motm-1/PI_MLOps/blob/main/item_item.py) archives.
+
+
+# <h2> **Aditional Information** </h2>
+
+- [Original Datasets](https://drive.google.com/drive/folders/1HqBG2-sUkz_R3h1dZU5F2uAzpRn7BSpj) and [Data Dictonary](https://docs.google.com/spreadsheets/d/1-t9HLzLHIGXvliq56UE_gMaWBVTPfrlTf2D9uAtLGrk/edit#gid=0)
+- [Deployment](https://pi-mlops-deploy.onrender.com/docs)
