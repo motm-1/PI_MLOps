@@ -115,7 +115,7 @@ To see the process you can visit the [Main](https://github.com/motm-1/PI_MLOps/b
     
   For this recommendation system I selected the game `titles` that appear in the reviews dataset since they represent the games people are most interested in, then I chose the columns `labels` and `developer` because they contain the most representative and clean information to ensure the system's accuracy.
 
-To see the process you can visit the [user-item](https://github.com/motm-1/PI_MLOps/blob/main/collaborative_filtering.py) and [item-item](https://github.com/motm-1/PI_MLOps/blob/main/item_item.py) archives.
+To see the process you can visit the [user-item](https://github.com/motm-1/PI_MLOps/blob/main/user_item.py) and [item-item](https://github.com/motm-1/PI_MLOps/blob/main/item_item.py) archives.
 
 
 # <h2> **Aditional Information** </h2>
