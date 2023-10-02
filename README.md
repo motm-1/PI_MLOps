@@ -1,4 +1,6 @@
-# <h1> **Individual Project MLOps** </h1>
+
+# <h1 align=center> **Individual Project MLOps** </h1>
+
 <p align="center">
 <img src="./_src/mlops_ia.jpg"  height=400 width=400>
 </p>
