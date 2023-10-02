@@ -148,7 +148,7 @@ class SentimentAnalysis:
     
     def run(self, save_path):
         """
-        Executes the sentiment analysis and saves the results to a CSV file.
+        Executes the sentiment analysis and save the results to a CSV file.
 
         Parameters:
             save_path (str): The path to save the results CSV file.
