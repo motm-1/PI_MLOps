@@ -17,6 +17,10 @@ model = load_model('./_src/Models/collaborative_filtering')
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"message": "Welcome to my API"}
+
 @app.get('/PlayTimeGenre/{genre}')
 async def playtimegenre(genre:str):
     genre = genre.title()
